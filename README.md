@@ -63,9 +63,9 @@ This installs:
 - ⬇️ `data/raw/AE_challenge_loans.csv` (108 MB)
 
 **Download the large file:**
-1. Download from: [GitHub Releases](https://github.com/mijailnils/kueski-analytics-engineer-mijail/releases)
+1. Download: [AE_challenge_loans.csv (108 MB)](https://github.com/mijailnils/kueski-analytics-engineer-mijail/releases/download/v1.0-data/AE_challenge_loans.csv)
 2. Place in `data/raw/` folder
-3. Or contact challenge provider for data files
+3. Verify with: `ls -lh data/raw/`
 
 **Verify data is ready:**
 ```bash
