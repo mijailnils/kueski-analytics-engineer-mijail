@@ -25,10 +25,10 @@
 3. Run ingestion: `python scripts/ingest.py --raw data/raw --out data/processed`.
 4. Run transformations locally with dbt (recommended):
    - Copy `dbt_project/profiles.yml.example` to `~/.dbt/profiles.yml` and adjust if necessary (or set `PROCESSED_DIR` env var).
-   - Run: `dbt run --project-dir dbt_project` and `dbt test --project-dir dbt_project`.
-   - The dbt models are organized into `models/landing/`, `models/serving/`, and `models/refined/`.
-5. Alternatively, use the dbt-style pandas runner: `python scripts/run_models.py` (adds staging → marts and writes `exports/`).
-6. Run tests: `pytest tests/` (contains basic data checks and will skip if no data present).
+   - Install dependencies: `pip install -r scripts/requirements.txt` (includes `dbt-core` and `dbt-duckdb`).
+   - Run: `PROCESSED_DIR=data/processed_sample dbt run --project-dir dbt_project` and `PROCESSED_DIR=data/processed_sample dbt test --project-dir dbt_project`.
+   - The dbt models are organized into `dbt_project/models/landing/`, `dbt_project/models/serving/`, and `dbt_project/models/refined/`.
+5. Run tests: `pytest tests/` (contains basic data checks and will skip if no data present).
 
 ---
 
