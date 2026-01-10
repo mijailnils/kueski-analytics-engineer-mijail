@@ -1,0 +1,84 @@
+[0m17:00:01.584443 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022008B9AC50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002200C37C150>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002200C0E8750>]}
+
+
+============================== 17:00:01.593716 | c695ac24-3564-4e58-a699-6cdd5e573b2f ==============================
+[0m17:00:01.593716 [info ] [MainThread]: Running with dbt=1.10.15
+[0m17:00:01.597376 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'write_json': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'empty': 'False', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'profiles_dir': 'dbt_project', 'log_format': 'default', 'quiet': 'False', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'dbt_project\\logs', 'introspect': 'True', 'no_print': 'None', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'invocation_command': 'dbt snapshot --project-dir dbt_project --profiles-dir dbt_project', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'target_path': 'None', 'use_experimental_parser': 'False'}
+[0m17:00:01.606357 [error] [MainThread]: Encountered an error:
+Runtime Error
+  Could not find profile named 'kueski'
+[0m17:00:01.610387 [debug] [MainThread]: Command `dbt snapshot` failed at 17:00:01.610387 after 0.20 seconds
+[0m17:00:01.612745 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002200C394A50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002200C3D28D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002200C3D1310>]}
+[0m17:00:01.614422 [debug] [MainThread]: Flushing usage events
+[0m17:00:02.461681 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:00:06.194396 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A2FE13BA50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A2FE425D50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A2FE426750>]}
+
+
+============================== 17:00:06.197423 | 4e2b6dde-a28f-44c7-a39b-5fc926063216 ==============================
+[0m17:00:06.197423 [info ] [MainThread]: Running with dbt=1.10.15
+[0m17:00:06.199855 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'target_path': 'None', 'cache_selected_only': 'False', 'warn_error': 'None', 'empty': 'False', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'profiles_dir': 'dbt_project', 'log_format': 'default', 'quiet': 'False', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'dbt_project\\logs', 'introspect': 'True', 'invocation_command': 'dbt run --project-dir dbt_project --profiles-dir dbt_project', 'fail_fast': 'False', 'no_print': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'write_json': 'True', 'use_experimental_parser': 'False'}
+[0m17:00:06.203484 [error] [MainThread]: Encountered an error:
+Runtime Error
+  Could not find profile named 'kueski'
+[0m17:00:06.203484 [debug] [MainThread]: Command `dbt run` failed at 17:00:06.203484 after 0.13 seconds
+[0m17:00:06.203484 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A2FE427290>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A2FE427010>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001A2FE3AF590>]}
+[0m17:00:06.208290 [debug] [MainThread]: Flushing usage events
+[0m17:00:06.953410 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:00:10.871713 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002A202264310>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002A201EB5D50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002A2022A1850>]}
+
+
+============================== 17:00:10.881072 | 036fbb52-fca0-4fea-bc99-380dbdb186ba ==============================
+[0m17:00:10.881072 [info ] [MainThread]: Running with dbt=1.10.15
+[0m17:00:10.881072 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'target_path': 'None', 'cache_selected_only': 'False', 'warn_error': 'None', 'profiles_dir': 'dbt_project', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'empty': 'None', 'quiet': 'False', 'log_format': 'default', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'dbt_project\\logs', 'introspect': 'True', 'invocation_command': 'dbt test --project-dir dbt_project --profiles-dir dbt_project', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'write_json': 'True'}
+[0m17:00:10.884980 [error] [MainThread]: Encountered an error:
+Runtime Error
+  Could not find profile named 'kueski'
+[0m17:00:10.886489 [debug] [MainThread]: Command `dbt test` failed at 17:00:10.886489 after 0.16 seconds
+[0m17:00:10.886489 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002A2022166D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002A201FAFC10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002A20221F7D0>]}
+[0m17:00:10.889837 [debug] [MainThread]: Flushing usage events
+[0m17:00:11.648906 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:01:06.193514 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000023FB4DD6AD0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000023FB4DD6990>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000023FB3F062D0>]}
+
+
+============================== 17:01:06.193514 | 5d67094c-4e4b-4597-b96a-a731bc5c3ad0 ==============================
+[0m17:01:06.193514 [info ] [MainThread]: Running with dbt=1.10.15
+[0m17:01:06.193514 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'target_path': 'None', 'cache_selected_only': 'False', 'warn_error': 'None', 'empty': 'False', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'profiles_dir': 'dbt_project', 'log_format': 'default', 'quiet': 'False', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'dbt_project\\logs', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'fail_fast': 'False', 'no_print': 'None', 'invocation_command': 'dbt snapshot --project-dir dbt_project --profiles-dir dbt_project', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'write_json': 'True'}
+[0m17:01:06.203422 [info ] [MainThread]: Error importing adapter: No module named 'dbt.adapters.duckdb'
+[0m17:01:06.203422 [error] [MainThread]: Encountered an error:
+Runtime Error
+  Credentials in profile "kueski", target "dev" invalid: Runtime Error
+    Could not find adapter type duckdb!
+[0m17:01:06.210942 [debug] [MainThread]: Command `dbt snapshot` failed at 17:01:06.209931 after 0.14 seconds
+[0m17:01:06.211941 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000023FB4E57390>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000023FB4E564D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000023FB4E57290>]}
+[0m17:01:06.212942 [debug] [MainThread]: Flushing usage events
+[0m17:01:06.993936 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:01:11.207771 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002DD9622EA90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002DD962752D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002DD96275FD0>]}
+
+
+============================== 17:01:11.210285 | a383d5a6-fa69-41d1-bd9f-5a5f89d8e56c ==============================
+[0m17:01:11.210285 [info ] [MainThread]: Running with dbt=1.10.15
+[0m17:01:11.210285 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'write_json': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'empty': 'False', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'profiles_dir': 'dbt_project', 'quiet': 'False', 'log_format': 'default', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'dbt_project\\logs', 'introspect': 'True', 'invocation_command': 'dbt run --project-dir dbt_project --profiles-dir dbt_project', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'target_path': 'None', 'use_experimental_parser': 'False'}
+[0m17:01:11.221371 [info ] [MainThread]: Error importing adapter: No module named 'dbt.adapters.duckdb'
+[0m17:01:11.223384 [error] [MainThread]: Encountered an error:
+Runtime Error
+  Credentials in profile "kueski", target "dev" invalid: Runtime Error
+    Could not find adapter type duckdb!
+[0m17:01:11.226274 [debug] [MainThread]: Command `dbt run` failed at 17:01:11.225264 after 0.20 seconds
+[0m17:01:11.226274 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002DD962AB150>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002DD95FC8810>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002DD9622FA10>]}
+[0m17:01:11.227276 [debug] [MainThread]: Flushing usage events
+[0m17:01:11.985883 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m17:01:16.189397 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022972AEB250>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022972B67E50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022972B67510>]}
+
+
+============================== 17:01:16.205224 | f9229db7-1b1d-4bcc-a419-574dcb36a782 ==============================
+[0m17:01:16.205224 [info ] [MainThread]: Running with dbt=1.10.15
+[0m17:01:16.207239 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'use_experimental_parser': 'False', 'cache_selected_only': 'False', 'warn_error': 'None', 'profiles_dir': 'dbt_project', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'empty': 'None', 'log_format': 'default', 'quiet': 'False', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'dbt_project\\logs', 'introspect': 'True', 'invocation_command': 'dbt test --project-dir dbt_project --profiles-dir dbt_project', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'write_json': 'True', 'target_path': 'None'}
+[0m17:01:16.207239 [info ] [MainThread]: Error importing adapter: No module named 'dbt.adapters.duckdb'
+[0m17:01:16.218430 [error] [MainThread]: Encountered an error:
+Runtime Error
+  Credentials in profile "kueski", target "dev" invalid: Runtime Error
+    Could not find adapter type duckdb!
+[0m17:01:16.220859 [debug] [MainThread]: Command `dbt test` failed at 17:01:16.218430 after 0.17 seconds
+[0m17:01:16.220859 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022972B6EF90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022972B6EED0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002297288C0D0>]}
+[0m17:01:16.221932 [debug] [MainThread]: Flushing usage events
+[0m17:01:16.997817 [debug] [MainThread]: An error was encountered while trying to flush usage events

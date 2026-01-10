@@ -7,3 +7,5 @@ exports/
 .manifest
 # Ignore raw large files (keep local copy, do not commit big csvs)
 data/raw/
+# Keep 'processed_sample' checked in so CI can run on GitHub; ignore full processed folder
+data/processed/
