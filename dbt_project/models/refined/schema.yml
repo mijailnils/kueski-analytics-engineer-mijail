@@ -8,3 +8,15 @@ models:
           column_name: loan_id
       - not_null:
           column_name: total_repaid
+      - unique:
+          column_name: loan_id
+
+  - name: loan_metrics
+    description: "Loan-level metrics demonstrating cohorting and accrual macros"
+    tests:
+      - not_null:
+          column_name: loan_id
+      - not_null:
+          column_name: total_repaid
+      - unique:
+          column_name: loan_id

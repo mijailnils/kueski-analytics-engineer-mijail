@@ -29,5 +29,6 @@ jobs:
           cd dbt_project
           dbt deps || true
           dbt debug
+          dbt snapshot
           dbt run
           dbt test
