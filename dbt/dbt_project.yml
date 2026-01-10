@@ -1,0 +1,31 @@
+name: 'kueski_finance_analysis'
+version: '1.0.0'
+config-version: 2
+
+profile: 'kueski_finance'
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  kueski_finance_analysis:
+    staging:
+      +materialized: view
+      +tags: ["staging"]
+      
+    intermediate:
+      +materialized: view
+      +tags: ["intermediate"]
+      
+    marts:
+      +materialized: table
+      +tags: ["marts"]
+
+vars:
+  analysis_start_date: '2025-01-01'
+  analysis_end_date: '2025-03-31'
+  vintage_months: ['2025-01', '2025-02', '2025-03']

@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Customer acquisition data with risk segmentation"
+    columns:
+      - name: user_id
+        description: "Unique customer identifier"
+        tests:
+          - unique
+          - not_null
+      - name: acquisition_date
+        description: "Date when customer was acquired"
+        tests:
+          - not_null
+      - name: acquisition_cost
+        description: "Customer acquisition cost (CAC)"
+        tests:
+          - not_null
+      - name: risk_segment
+        description: "Risk category: Low Risk, Medium Risk, High Risk, Unknown"
+
+  - name: stg_loans
+    description: "Loan data with monthly snapshots"
+    columns:
+      - name: loan_id
+        description: "Loan identifier"
+        tests:
+          - not_null
+      - name: user_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: user_id
+      - name: disbursed_date
+        description: "Date when loan was disbursed"
+        tests:
+          - not_null
+      - name: vintage_month
+        description: "Disbursement month (YYYY-MM)"
+
+  - name: stg_repayments
+    description: "Payment transactions with revenue components"
+    columns:
+      - name: repayment_transaction_id
+        description: "Unique transaction identifier"
+        tests:
+          - unique
+          - not_null
+      - name: loan_id
+        description: "Loan identifier"
+        tests:
+          - not_null
+      - name: event_date
+        description: "Payment transaction date"
+        tests:
+          - not_null
+      - name: reven

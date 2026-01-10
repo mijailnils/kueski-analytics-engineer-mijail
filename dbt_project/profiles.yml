@@ -1,8 +1,0 @@
-kueski:
-  target: dev
-  outputs:
-    dev:
-      type: duckdb
-      path: dev.db
-      threads: 1
-      extensions: ['parquet']

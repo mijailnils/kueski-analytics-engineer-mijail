@@ -1,11 +1,41 @@
-.venv/
+# Data files
+data/raw/AE_challenge_loans.csv 
+# Large data file excluded (108MB - exceeds GitHub limit)
+
+# data/raw/*.csv  <--  CSV files are now tracked
+data/raw/*.parquet
+data/processed/
+data/processed_sample/
+*.duckdb
+*.duckdb.wal
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml
+
+# Python
 __pycache__/
-*.pyc
-data/processed/
-exports/
-*.parquet
-.manifest
-# Ignore raw large files (keep local copy, do not commit big csvs)
-data/raw/
-# Keep 'processed_sample' checked in so CI can run on GitHub; ignore full processed folder
-data/processed/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.Python
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Exports (keep structure, ignore large files)
+exports/*.csv
+exports/*.parquet
+!exports/.gitkeep
+
+# OS
+Thumbs.db
