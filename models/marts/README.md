@@ -1,1 +1,0 @@
-Marts: business-ready tables for reporting and analysis (e.g., loans_mart, repayments_mart, cohorts).
