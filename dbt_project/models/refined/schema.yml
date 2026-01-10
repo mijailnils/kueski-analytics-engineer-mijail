@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: repayments_agg
+    description: "Aggregated repayment metrics per loan"
+    tests:
+      - not_null:
+          column_name: loan_id
+      - not_null:
+          column_name: total_repaid

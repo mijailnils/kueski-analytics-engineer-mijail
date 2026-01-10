@@ -1,0 +1,1 @@
+Macros: reusable helper functions and SQL snippets (cohorting, accrual helpers). For now, implemented as Python helpers in `scripts/`.

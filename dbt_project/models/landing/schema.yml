@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: landing_repayments
+    description: "Raw repayments imported from parquet files"
+    tests:
+      - not_null:
+          column_name: loan_id
+      - not_null:
+          column_name: event_date
+      - unique:
+          column_name: repayment_transaction_id
+
+  - name: landing_customers
+    description: "Raw customers/loans imported from parquet files"
+    tests:
+      - not_null:
+          column_name: loan_id
+      - unique:
+          column_name: loan_id

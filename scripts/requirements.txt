@@ -1,0 +1,9 @@
+pandas>=1.5
+pyarrow
+pytest
+fastparquet
+python-dateutil
+
+dbt-core>=1.4
+
+dbt-duckdb
