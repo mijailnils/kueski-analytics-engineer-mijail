@@ -5,3 +5,5 @@ data/processed/
 exports/
 *.parquet
 .manifest
+# Ignore raw large files (keep local copy, do not commit big csvs)
+data/raw/
