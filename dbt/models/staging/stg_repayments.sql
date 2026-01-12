@@ -38,8 +38,16 @@ cleaned as (
         
         -- Revenue calculations (excluding principal which is capital return)
         interestamount_trans + feesamount_trans + penaltyamount_trans as revenue_pre_tax,
-        interestamount_trans + feesamount_trans + penaltyamount_trans + 
-            taxoninterestamount_trans + taxonfeesamount_trans + taxonpenaltyamount_trans as revenue_total
+        
+        -- Revenue total using macro for reusable logic
+        {{ calculate_revenue(
+            'interestamount_trans',
+            'feesamount_trans',
+            'penaltyamount_trans',
+            'taxoninterestamount_trans',
+            'taxonfeesamount_trans',
+            'taxonpenaltyamount_trans'
+        ) }} as revenue_total
         
     from source
 )

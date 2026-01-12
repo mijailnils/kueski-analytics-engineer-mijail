@@ -20,7 +20,7 @@ cleaned as (
         
         -- Dates
         cast(disbursed_date as date) as disbursed_date,
-        strftime(cast(disbursed_date as date), '%Y-%m') as vintage_month,
+        {{ assign_cohort('cast(disbursed_date as date)') }} as vintage_month,
         cast(limit_month as date) as limit_month,
         strftime(cast(limit_month as date), '%Y-%m') as limit_month_str,
         
@@ -41,7 +41,7 @@ cleaned as (
         -- Derived flags
         case when charge_off > 0 then true else false end as is_charged_off,
         
-        -- DPD bucket mapping
+        -- DPD bucket mapping (using delinquency_status directly since it's more detailed)
         case 
             when delinquency_status = 'Fully Paid' then '0_Fully_Paid'
             when delinquency_status = 'Current' then '0_Current'
