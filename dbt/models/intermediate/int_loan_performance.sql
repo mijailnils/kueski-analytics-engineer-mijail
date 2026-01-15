@@ -6,8 +6,6 @@
 }}
 
 -- Comprehensive loan-level performance metrics
--- Joins loans, repayments, and customer data
--- Calculates all financial metrics needed for analysis
 
 with q1_loans as (
     select * from {{ ref('int_loans_q1_vintages') }}
@@ -17,25 +15,10 @@ repayments_agg as (
     select * from {{ ref('int_loan_repayments_agg') }}
 ),
 
-customers as (
-    select * from {{ ref('stg_customers') }}
+customer_metrics as (
+    select * from {{ ref('int_customer_loan_metrics') }}
 ),
 
--- PASO 1: Agregar CAC por user_id (único por cliente)
-customer_cac as (
-    select
-        user_id,
-        MAX(acquisition_cost) as customer_cac,
-        MAX(acquisition_date) as acquisition_date,
-        MAX(risk_band_production) as risk_band_production,
-        MAX(risk_segment) as risk_segment,
-        MAX(channel) as channel,
-        MAX(state) as state
-    from customers
-    group by user_id
-),
-
--- PASO 2: Enumerar préstamos por cliente (orden cronológico)
 loans_with_sequence as (
     select
         l.*,
@@ -43,28 +26,28 @@ loans_with_sequence as (
     from q1_loans l
 ),
 
--- PASO 3: Join todo y asignar CAC solo al préstamo #1
 loan_performance as (
     select
         -- IDs and dimensions
         l.loan_id,
         l.user_id,
         CAST(l.vintage_month AS VARCHAR) as vintage_month,
+        
+        -- NUEVAS METRICAS
+        cm.total_loans as customer_total_loans,
+        cm.cac_per_loan as customer_cac_per_loan,
+        l.loan_sequence_number,
+        
+        -- Dates
         l.disbursed_date,
-        c.acquisition_date,
+        cm.acquisition_date,
         
-        -- SOLO asignar CAC si es el préstamo #1 del cliente
-        case 
-            when l.loan_sequence_number = 1 
-            then c.customer_cac 
-            else 0 
-        end as cac,
+        -- Customer attributes
+        cm.risk_band_production,
+        cm.risk_segment,
+        cm.channel,
+        cm.state,
         
-        c.risk_band_production,
-        c.risk_segment,
-        c.channel,
-        c.state,
-
         -- Loan characteristics
         l.term,
         l.interest_rate,
@@ -73,62 +56,68 @@ loan_performance as (
         l.delinquency_status,
         l.dpd_bucket,
         l.is_charged_off,
-
-        -- Repayment data
-        coalesce(r.total_revenue, 0) as revenue_total,
-        coalesce(r.total_interest_revenue, 0) as interest_revenue,
-        coalesce(r.total_fee_revenue, 0) as fee_revenue,
-        coalesce(r.total_penalty_revenue, 0) as penalty_revenue,
-        coalesce(r.total_principal_paid, 0) as principal_paid,
-        coalesce(r.payment_count, 0) as payment_count,
+        
+        -- Revenue metrics (nombres correctos)
+        COALESCE(r.total_revenue, 0) as revenue_total,
+        COALESCE(r.total_interest_revenue, 0) as interest_revenue,
+        COALESCE(r.total_fee_revenue, 0) as fee_revenue,
+        COALESCE(r.total_penalty_revenue, 0) as penalty_revenue,
+        COALESCE(r.total_principal_paid, 0) as principal_paid,
+        COALESCE(r.payment_count, 0) as payment_count,
         r.first_payment_date,
         r.last_payment_date,
-
-        -- Costs
-        l.charge_off as funding_cost,
-        l.cogs_total_cost as cogs,
+        
+        -- Cost metrics
+        COALESCE(l.charge_off, 0) as funding_cost,
+        COALESCE(l.cogs_total_cost, 0) as cogs,
+        
+        -- CAC: Solo al préstamo #1
+        CASE 
+            WHEN l.loan_sequence_number = 1 THEN cm.cac_total
+            ELSE 0 
+        END as cac,
+        
         l.capital_balance,
-
-        -- Financial metrics
-        coalesce(r.total_revenue, 0) - l.charge_off as financial_margin,
-        coalesce(r.total_revenue, 0) - l.charge_off - l.cogs_total_cost as contribution_margin,
-
-        -- Margin percentages
-        case
-            when coalesce(r.total_revenue, 0) > 0
-            then (coalesce(r.total_revenue, 0) - l.charge_off) / coalesce(r.total_revenue, 0)
-            else null
-        end as financial_margin_pct,
-
-        case
-            when coalesce(r.total_revenue, 0) > 0
-            then (coalesce(r.total_revenue, 0) - l.charge_off - l.cogs_total_cost) / coalesce(r.total_revenue, 0)
-            else null
-        end as contribution_margin_pct,
-
+        
+        -- Margins
+        COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0) as financial_margin,
+        COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0) - COALESCE(l.cogs_total_cost, 0) as contribution_margin,
+        
+        CASE 
+            WHEN COALESCE(r.total_revenue, 0) > 0 
+            THEN (COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0)) / COALESCE(r.total_revenue, 0)
+            ELSE 0 
+        END as financial_margin_pct,
+        
+        CASE 
+            WHEN COALESCE(r.total_revenue, 0) > 0 
+            THEN (COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0) - COALESCE(l.cogs_total_cost, 0)) / COALESCE(r.total_revenue, 0)
+            ELSE 0 
+        END as contribution_margin_pct,
+        
         -- Loss rate
-        case
-            when l.requested_amount > 0
-            then l.charge_off / l.requested_amount
-            else 0
-        end as loss_rate,
-
-        -- LTV/CAC ratio (solo calcular para préstamo #1)
-        case
-            when l.loan_sequence_number = 1 and c.customer_cac > 0
-            then (coalesce(r.total_revenue, 0) - l.charge_off - l.cogs_total_cost) / c.customer_cac
-            else null
-        end as ltv_to_cac_ratio,
-
-        -- Status flags
-        case when l.delinquency_status = 'Fully Paid' then 1 else 0 end as is_fully_paid,
+        CASE 
+            WHEN l.funded_amount > 0 
+            THEN COALESCE(l.charge_off, 0) / l.funded_amount 
+            ELSE 0 
+        END as loss_rate,
+        
+        -- LTV/CAC ratio
+        CASE 
+            WHEN l.loan_sequence_number = 1 AND cm.cac_total > 0 
+            THEN COALESCE(r.total_revenue, 0) / cm.cac_total
+            ELSE NULL
+        END as ltv_to_cac_ratio,
+        
+        -- Flags
+        case when r.total_principal_paid >= l.funded_amount then 1 else 0 end as is_fully_paid,
         case when l.delinquency_status = 'Current' then 1 else 0 end as is_current,
-        case when l.delinquency_status in ('Past due (1-29)', 'Past due (30-59)', 'Past due (60-89)', 'Past due (90-179)', 'Past due (180<)') then 1 else 0 end as is_delinquent,
+        case when l.delinquency_status in ('Past due (30-59)', 'Past due (60-89)', 'Past due (90-179)', 'Past due (180<)') then 1 else 0 end as is_delinquent,
         case when r.payment_count > 0 then 1 else 0 end as has_payments
-
+        
     from loans_with_sequence l
     left join repayments_agg r on l.loan_id = r.loan_id
-    left join customer_cac c on l.user_id = c.user_id
+    left join customer_metrics cm on l.user_id = cm.user_id
 )
 
 select * from loan_performance
