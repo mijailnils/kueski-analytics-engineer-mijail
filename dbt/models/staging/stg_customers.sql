@@ -45,7 +45,8 @@ cleaned as (
         
         -- Geography
         city,
-        state
+        state,
+        current_timestamp as loaded_at
         
     from source
 )

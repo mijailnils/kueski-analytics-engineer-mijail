@@ -4,12 +4,21 @@
         tags=['staging', 'loans']
     )
 }}
-
--- Staging model for loan data
--- One row per loan-month snapshot with parsed schedule
-
 with source as (
     select * from read_csv_auto('C:/Users/mijai/kueski-analytics-engineer-mijail/data/raw/AE_challenge_loans.csv')
+),
+
+-- Deduplicar: quedarse con la fila del mes de originación (founded_amount > 0)
+-- O si todas tienen founded_amount = 0, tomar la primera por limit_month
+deduplicated as (
+    select *,
+        row_number() over (
+            partition by loan_id 
+            order by 
+                case when founded_amount > 0 then 0 else 1 end,  -- Priorizar filas con funded_amount > 0
+                limit_month asc  -- Si todas son 0, tomar la más antigua
+        ) as row_num
+    from source
 ),
 
 cleaned as (
@@ -19,45 +28,51 @@ cleaned as (
         user_id,
         
         -- Dates
+        cast(disbursed_date as timestamp) as disbursed_timestamp,
         cast(disbursed_date as date) as disbursed_date,
-        {{ assign_cohort('cast(disbursed_date as date)') }} as vintage_month,
+        strftime(cast(disbursed_date as date), '%Y-%m') as disbursed_month,
+        strftime(cast(disbursed_date as date), '%Y') as disbursed_year,
+        
+        -- Vintage = disbursed_date (fecha de originación)
+        cast(disbursed_date as date) as vintage_date,
+        strftime(cast(disbursed_date as date), '%Y-%m') as vintage_month,
+        strftime(cast(disbursed_date as date), '%Y') as vintage_year,
+        
+        -- Limit month (snapshot date)
         cast(limit_month as date) as limit_month,
-        strftime(cast(limit_month as date), '%Y-%m') as limit_month_str,
         
-        -- Loan terms
-        term,
-        interestrate as interest_rate,
-        
-        -- Amounts
+        -- Loan attributes
         requested_amount,
-        founded_amount as funded_amount,
-        cogs_total_cost,
+        founded_amount as loan_amount,
+        term as loan_term,
+        interestrate as interest_rate,
+        original_schedule,
+        
+        -- Financial metrics
         charge_off,
+        cogs_total_cost,
         capital_balance,
         
-        -- Status
+        -- Funding cost (charge-offs are the actual loss)
+        {{ calculate_funding_cost('charge_off') }} as funding_cost,
+        
+        -- Delinquency tracking
+        case when delinquency_status = 'Delinquent' then 1 else 0 end as is_delinquent,
         delinquency_status,
         
-        -- Derived flags
-        case when charge_off > 0 then true else false end as is_charged_off,
-        
-        -- DPD bucket mapping (using delinquency_status directly since it's more detailed)
+        -- DPD bucket
         case 
-            when delinquency_status = 'Fully Paid' then '0_Fully_Paid'
-            when delinquency_status = 'Current' then '0_Current'
-            when delinquency_status = 'Past due (1-29)' then '1_DPD_1_29'
-            when delinquency_status = 'Past due (30-59)' then '2_DPD_30_59'
-            when delinquency_status = 'Past due (60-89)' then '3_DPD_60_89'
-            when delinquency_status = 'Past due (90-179)' then '4_DPD_90_179'
-            when delinquency_status = 'Past due (180<)' then '5_DPD_180_plus'
-            when delinquency_status = 'Sold' then '6_Sold'
-            else '7_Unknown'
+            when delinquency_status in ('Current', 'Fully Paid') then '0_Current'
+            when delinquency_status = 'Delinquent' then 'Delinquent'
+            when delinquency_status is null then 'Unknown'
+            else delinquency_status
         end as dpd_bucket,
         
-        -- Keep original schedule
-        original_schedule
+        -- Metadata
+        current_timestamp as loaded_at 
         
-    from source
+    from deduplicated
+    where row_num = 1  -- SOLO la primera fila por loan_id
 )
 
 select * from cleaned

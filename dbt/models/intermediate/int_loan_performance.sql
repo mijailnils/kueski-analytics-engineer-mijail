@@ -33,7 +33,7 @@ loan_performance as (
         l.user_id,
         CAST(l.vintage_month AS VARCHAR) as vintage_month,
         
-        -- NUEVAS METRICAS
+        -- Customer loan metrics
         cm.total_loans as customer_total_loans,
         cm.cac_per_loan as customer_cac_per_loan,
         l.loan_sequence_number,
@@ -49,15 +49,14 @@ loan_performance as (
         cm.state,
         
         -- Loan characteristics
-        l.term,
+        l.loan_term,  -- ✅ Cambiado de "l.term"
         l.interest_rate,
-        l.requested_amount,
-        l.funded_amount,
+        l.loan_amount,
         l.delinquency_status,
         l.dpd_bucket,
-        l.is_charged_off,
+        l.is_delinquent,
         
-        -- Revenue metrics (nombres correctos)
+        -- Revenue metrics
         COALESCE(r.total_revenue, 0) as revenue_total,
         COALESCE(r.total_interest_revenue, 0) as interest_revenue,
         COALESCE(r.total_fee_revenue, 0) as fee_revenue,
@@ -68,51 +67,51 @@ loan_performance as (
         r.last_payment_date,
         
         -- Cost metrics
-        COALESCE(l.charge_off, 0) as funding_cost,
+        COALESCE(l.funding_cost, 0) as funding_cost,
         COALESCE(l.cogs_total_cost, 0) as cogs,
         
         -- CAC: Solo al préstamo #1
         CASE 
-            WHEN l.loan_sequence_number = 1 THEN cm.cac_total
+            WHEN l.loan_sequence_number = 1 THEN COALESCE(cm.cac_total, 0)
             ELSE 0 
         END as cac,
         
         l.capital_balance,
         
         -- Margins
-        COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0) as financial_margin,
-        COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0) - COALESCE(l.cogs_total_cost, 0) as contribution_margin,
+        COALESCE(r.total_revenue, 0) - COALESCE(l.funding_cost, 0) as financial_margin,
+        COALESCE(r.total_revenue, 0) - COALESCE(l.funding_cost, 0) - COALESCE(l.cogs_total_cost, 0) as contribution_margin,
         
         CASE 
             WHEN COALESCE(r.total_revenue, 0) > 0 
-            THEN (COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0)) / COALESCE(r.total_revenue, 0)
+            THEN (COALESCE(r.total_revenue, 0) - COALESCE(l.funding_cost, 0)) / COALESCE(r.total_revenue, 0)
             ELSE 0 
         END as financial_margin_pct,
         
         CASE 
             WHEN COALESCE(r.total_revenue, 0) > 0 
-            THEN (COALESCE(r.total_revenue, 0) - COALESCE(l.charge_off, 0) - COALESCE(l.cogs_total_cost, 0)) / COALESCE(r.total_revenue, 0)
+            THEN (COALESCE(r.total_revenue, 0) - COALESCE(l.funding_cost, 0) - COALESCE(l.cogs_total_cost, 0)) / COALESCE(r.total_revenue, 0)
             ELSE 0 
         END as contribution_margin_pct,
         
         -- Loss rate
         CASE 
-            WHEN l.funded_amount > 0 
-            THEN COALESCE(l.charge_off, 0) / l.funded_amount 
+            WHEN l.loan_amount > 0 
+            THEN COALESCE(l.funding_cost, 0) / l.loan_amount 
             ELSE 0 
         END as loss_rate,
         
         -- LTV/CAC ratio
         CASE 
-            WHEN l.loan_sequence_number = 1 AND cm.cac_total > 0 
+            WHEN l.loan_sequence_number = 1 AND COALESCE(cm.cac_total, 0) > 0 
             THEN COALESCE(r.total_revenue, 0) / cm.cac_total
             ELSE NULL
         END as ltv_to_cac_ratio,
         
         -- Flags
-        case when r.total_principal_paid >= l.funded_amount then 1 else 0 end as is_fully_paid,
+        case when r.total_principal_paid >= l.loan_amount then 1 else 0 end as is_fully_paid,
         case when l.delinquency_status = 'Current' then 1 else 0 end as is_current,
-        case when l.delinquency_status in ('Past due (30-59)', 'Past due (60-89)', 'Past due (90-179)', 'Past due (180<)') then 1 else 0 end as is_delinquent,
+        case when l.is_delinquent = 1 then 1 else 0 end as is_delinquent_flag,
         case when r.payment_count > 0 then 1 else 0 end as has_payments
         
     from loans_with_sequence l

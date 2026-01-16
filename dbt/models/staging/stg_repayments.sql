@@ -47,7 +47,9 @@ cleaned as (
             'taxoninterestamount_trans',
             'taxonfeesamount_trans',
             'taxonpenaltyamount_trans'
-        ) }} as revenue_total
+        ) }} as revenue_total,
+
+        current_timestamp as loaded_at
         
     from source
 )

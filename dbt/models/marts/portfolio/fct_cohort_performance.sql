@@ -1,38 +1,32 @@
 {{
     config(
         materialized='view',
-        tags=['marts', 'portfolio']
+        tags=['marts', 'portfolio', 'cohort']
     )
 }}
 
--- Fact table: Cohort-level performance metrics
--- Aggregates loans by vintage and risk segment
--- Provides core metrics for portfolio analysis
+-- Cohort-level performance aggregations
 
-with loan_financials as (
-    select * from {{ ref('fct_loan_financials') }}
+with loan_performance as (
+    select * from {{ ref('int_loan_performance') }}
 ),
 
 cohort_metrics as (
     select
-        -- Cohort dimensions
         vintage_month,
         risk_segment,
+        state,
         
-        -- Loan counts
-        count(distinct loan_id) as loan_count,
-        count(distinct user_id) as customer_count,
-        
-        -- Portfolio volumes
-        sum(requested_amount) as total_requested,
-        sum(funded_amount) as total_funded,
-        avg(requested_amount) as avg_loan_size,
+        -- Volume metrics
+        count(distinct loan_id) as total_loans,
+        count(distinct user_id) as total_customers,
+        sum(loan_amount) as total_funded,
         
         -- Revenue metrics
         sum(revenue_total) as total_revenue,
-        sum(interest_revenue) as total_interest_revenue,
-        sum(fee_revenue) as total_fee_revenue,
-        avg(revenue_total) as avg_revenue_per_loan,
+        sum(interest_revenue) as total_interest,
+        sum(fee_revenue) as total_fees,
+        sum(penalty_revenue) as total_penalties,
         
         -- Cost metrics
         sum(funding_cost) as total_funding_cost,
@@ -43,70 +37,23 @@ cohort_metrics as (
         sum(financial_margin) as total_financial_margin,
         sum(contribution_margin) as total_contribution_margin,
         
-        avg(financial_margin) as avg_financial_margin_per_loan,
-        avg(contribution_margin) as avg_contribution_margin_per_loan,
+        -- Performance metrics
+        sum(case when is_delinquent_flag = 1 then 1 else 0 end) as delinquent_loans,
+        sum(case when is_fully_paid = 1 then 1 else 0 end) as fully_paid_loans,
+        sum(principal_paid) as total_principal_paid,
         
-        -- Margin percentages
-        case 
-            when sum(revenue_total) > 0 
-            then sum(financial_margin) / sum(revenue_total) 
-            else 0 
-        end as financial_margin_pct,
+        -- Ratios
+        avg(loss_rate) as avg_loss_rate,
+        sum(revenue_total) / nullif(sum(cac), 0) as cohort_ltv_cac_ratio,
+        sum(principal_paid) / nullif(sum(loan_amount), 0) as recovery_rate,
+        sum(case when is_delinquent_flag = 1 then 1 else 0 end) / 
+            nullif(count(*), 0) as delinquency_rate
         
-        case 
-            when sum(revenue_total) > 0 
-            then sum(contribution_margin) / sum(revenue_total) 
-            else 0 
-        end as contribution_margin_pct,
-        
-        -- Loss metrics
-        sum(case when is_charged_off = 1 then 1 else 0 end) as charged_off_count,
-        
-        case 
-            when sum(requested_amount) > 0 
-            then sum(funding_cost) / sum(requested_amount) 
-            else 0 
-        end as loss_rate,
-        
-        case 
-            when count(distinct loan_id) > 0 
-            then sum(case when is_charged_off = 1 then 1 else 0 end)::float / count(distinct loan_id)
-            else 0
-        end as charge_off_rate,
-        
-        -- Payment behavior
-        sum(case when is_fully_paid = 1 then 1 else 0 end) as fully_paid_count,
-        sum(case when is_current = 1 then 1 else 0 end) as current_count,
-        sum(case when is_delinquent = 1 then 1 else 0 end) as delinquent_count,
-        sum(principal_paid) as total_principal_collected,
-        
-        case 
-            when count(distinct loan_id) > 0 
-            then sum(case when is_fully_paid = 1 then 1 else 0 end)::float / count(distinct loan_id)
-            else 0
-        end as fully_paid_rate,
-        
-        case 
-            when count(distinct loan_id) > 0 
-            then sum(case when is_delinquent = 1 then 1 else 0 end)::float / count(distinct loan_id)
-            else 0
-        end as delinquency_rate,
-        
-        -- LTV vs CAC
-        sum(contribution_margin) as total_ltv,
-        avg(ltv_to_cac_ratio) as avg_ltv_to_cac_ratio,
-        
-        case
-            when sum(cac) > 0
-            then sum(contribution_margin) / sum(cac)
-            else null
-        end as cohort_ltv_to_cac_ratio
-        
-    from loan_financials
+    from loan_performance
     group by 
         vintage_month,
-        risk_segment
+        risk_segment,
+        state
 )
 
 select * from cohort_metrics
-order by vintage_month, risk_segment

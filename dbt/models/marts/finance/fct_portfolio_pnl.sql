@@ -5,100 +5,57 @@
     )
 }}
 
--- Fact table: Portfolio P&L summary
--- Executive-level P&L view by vintage and risk segment
--- Used for CEO/CFO briefing and strategic decision making
+-- Portfolio-level P&L statement
 
-with loan_financials as (
-    select * from {{ ref('fct_loan_financials') }}
+with loan_performance as (
+    select * from {{ ref('int_loan_performance') }}
 ),
 
-pnl_summary as (
+portfolio_pnl as (
     select
-        -- Dimensions
         vintage_month,
-        risk_segment,
         
-        -- Volume metrics
-        count(distinct loan_id) as total_loans,
-        count(distinct user_id) as total_customers,
-        sum(requested_amount) as gross_loan_volume,
+        -- Volume
+        count(distinct loan_id) as loan_count,
+        count(distinct user_id) as customer_count,
+        sum(loan_amount) as gross_loan_volume,
         
-        -- Revenue breakdown
-        sum(interest_revenue) as interest_revenue,
-        sum(fee_revenue) as fee_revenue,
-        sum(penalty_revenue) as penalty_revenue,
+        -- Revenue
         sum(revenue_total) as total_revenue,
+        sum(interest_revenue) as interest_income,
+        sum(fee_revenue) as fee_income,
+        sum(penalty_revenue) as penalty_income,
         
-        -- Cost breakdown
-        sum(funding_cost) as funding_cost,  -- Charge-offs
-        sum(cogs) as operational_cost,  -- COGS
-        sum(cac) as acquisition_cost,  -- CAC
+        -- Direct costs
+        sum(funding_cost) as funding_losses,
+        sum(cogs) as operating_costs,
         
-        -- Margin analysis
-        sum(revenue_total - funding_cost) as financial_margin,
-        sum(revenue_total - funding_cost - cogs) as contribution_margin,
-        sum(revenue_total - funding_cost - cogs - cac) as net_profit,
+        -- Gross profit
+        sum(financial_margin) as gross_profit,
         
-        -- Per loan metrics
-        avg(revenue_total) as revenue_per_loan,
-        avg(funding_cost) as funding_cost_per_loan,
-        avg(contribution_margin) as contribution_margin_per_loan,
+        -- Customer acquisition
+        sum(cac) as customer_acquisition_cost,
         
-        -- Efficiency ratios
-        case 
-            when sum(revenue_total) > 0 
-            then sum(funding_cost) / sum(revenue_total) 
-            else 0 
-        end as funding_cost_ratio,
+        -- Net profit
+        sum(contribution_margin) as net_profit,
         
-        case 
-            when sum(revenue_total) > 0 
-            then sum(cogs) / sum(revenue_total) 
-            else 0 
-        end as operational_cost_ratio,
+        -- Margins
+        sum(financial_margin) / nullif(sum(revenue_total), 0) as gross_margin_pct,
+        sum(contribution_margin) / nullif(sum(revenue_total), 0) as net_margin_pct,
         
-        case 
-            when sum(revenue_total) > 0 
-            then sum(financial_margin) / sum(revenue_total) 
-            else 0 
-        end as financial_margin_pct,
+        -- Unit economics
+        sum(revenue_total) / nullif(count(distinct loan_id), 0) as revenue_per_loan,
+        sum(contribution_margin) / nullif(count(distinct loan_id), 0) as profit_per_loan,
+        sum(cac) / nullif(count(distinct user_id), 0) as cac_per_customer,
         
-        case 
-            when sum(revenue_total) > 0 
-            then sum(contribution_margin) / sum(revenue_total) 
-            else 0 
-        end as contribution_margin_pct,
+        -- Loss metrics
+        sum(funding_cost) / nullif(sum(loan_amount), 0) as portfolio_loss_rate,
+        sum(case when is_delinquent_flag = 1 then 1 else 0 end) / 
+            nullif(count(*), 0) as portfolio_delinquency_rate
         
-        case 
-            when sum(revenue_total) > 0 
-            then (sum(revenue_total) - sum(funding_cost) - sum(cogs) - sum(cac)) / sum(revenue_total)
-            else 0 
-        end as net_profit_margin_pct,
-        
-        -- Risk metrics
-        case 
-            when sum(requested_amount) > 0 
-            then sum(funding_cost) / sum(requested_amount) 
-            else 0 
-        end as loss_rate,
-        
-        sum(case when is_charged_off = 1 then 1 else 0 end) as charged_off_loans,
-        sum(case when is_fully_paid = 1 then 1 else 0 end) as fully_paid_loans,
-        sum(case when is_delinquent = 1 then 1 else 0 end) as delinquent_loans,
-        
-        -- Return metrics
-        case
-            when sum(cac) > 0
-            then sum(contribution_margin) / sum(cac)
-            else null
-        end as ltv_to_cac_ratio
-        
-    from loan_financials
-    group by 
-        vintage_month,
-        risk_segment
+    from loan_performance
+    group by vintage_month
 )
 
-select * from pnl_summary
-order by vintage_month, risk_segment
+select * from portfolio_pnl
+order by vintage_month
