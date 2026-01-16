@@ -14,7 +14,7 @@ with loan_financials as (
 roll_rate_analysis as (
     select
         vintage_month,
-        risk_segment,
+        risk_segment_customer,
         
         -- Current state distribution
         count(distinct case when dpd_bucket = '0_Current' then loan_id end) as current_count,
@@ -31,7 +31,7 @@ roll_rate_analysis as (
         sum(funding_cost) / nullif(sum(loan_amount), 0) as loss_rate
         
     from loan_financials
-    group by vintage_month, risk_segment
+    group by vintage_month, risk_segment_customer
 )
 
 select * from roll_rate_analysis

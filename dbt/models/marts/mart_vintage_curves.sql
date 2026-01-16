@@ -18,7 +18,7 @@ repayments as (
 cohort_performance as (
     select
         l.vintage_month,
-        l.risk_segment,
+        l.risk_segment_customer,
         
         -- Cohort age in months
         datediff('month', l.vintage_date, r.event_date) as months_since_origination,
@@ -42,7 +42,7 @@ cohort_performance as (
     where datediff('month', l.vintage_date, r.event_date) >= 0
     group by 
         l.vintage_month,
-        l.risk_segment,
+        l.risk_segment_customer,
         datediff('month', l.vintage_date, r.event_date)
 )
 

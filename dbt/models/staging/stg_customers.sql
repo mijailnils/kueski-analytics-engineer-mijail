@@ -46,6 +46,8 @@ cleaned as (
         -- Geography
         city,
         state,
+
+        -- update date 
         current_timestamp as loaded_at
         
     from source

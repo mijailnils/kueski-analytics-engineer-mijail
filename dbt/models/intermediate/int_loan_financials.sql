@@ -5,8 +5,7 @@
     )
 }}
 
--- Combines loan data with repayment revenue to calculate financial margins
--- One row per loan with aggregated financial metrics
+-- Loan financials with customer attributes and loan sequence
 
 with loans as (
     select * from {{ ref('stg_loans') }}
@@ -28,6 +27,23 @@ customers as (
     select * from {{ ref('stg_customers') }}
 ),
 
+-- Calculate total loans per customer
+customer_loan_counts as (
+    select
+        user_id,
+        count(distinct loan_id) as total_loans
+    from loans
+    group by user_id
+),
+
+-- Calculate loan sequence per customer
+loans_with_sequence as (
+    select
+        l.*,
+        row_number() over (partition by l.user_id order by l.disbursed_date asc) as loan_sequence_number
+    from loans l
+),
+
 joined as (
     select
         l.loan_id,
@@ -38,11 +54,24 @@ joined as (
         l.loan_amount,
         l.loan_term,
         l.interest_rate,
-        l.requested_amount,
         l.delinquency_status,
         l.is_delinquent,
         l.dpd_bucket,
         l.capital_balance,
+        
+        -- Loan sequence attributes
+        l.loan_sequence_number,
+        case when l.loan_sequence_number = 1 then 1 else 0 end as flg_first_loan_customer,
+        
+        -- Customer recurrency flag (calculated from loan counts)
+        case when coalesce(clc.total_loans, 1) > 1 then 1 else 0 end as flg_recurrent_customer,
+        
+        -- Customer attributes
+        c.risk_segment as risk_segment_customer,
+        c.risk_band_production as risk_band_production_customer,
+        c.channel as channel_customer,
+        c.state as state_customer,
+        c.city as city_customer,
         
         -- Revenue components
         coalesce(r.total_revenue, 0) as revenue,
@@ -53,10 +82,13 @@ joined as (
         -- Funding cost (charge-offs)
         l.funding_cost,
         
-        -- CAC (customer acquisition cost)
-        coalesce(c.acquisition_cost, 0) as cac,
+        -- CAC (only for first loan)
+        case 
+            when l.loan_sequence_number = 1 then coalesce(c.acquisition_cost, 0)
+            else 0
+        end as cac,
         
-        -- COGS REAL (from loans data - includes all direct costs for this loan)
+        -- COGS
         coalesce(l.cogs_total_cost, 0) as cogs,
         
         -- Financial margin = Revenue - Funding cost
@@ -75,26 +107,29 @@ joined as (
         -- Principal repayment
         coalesce(r.total_principal_repaid, 0) as principal_repaid,
         
-        -- Net profit = Contribution margin
-        {{ calculate_contribution_margin(
-            'coalesce(r.total_revenue, 0)',
-            'l.funding_cost',
-            'coalesce(l.cogs_total_cost, 0)'
-        ) }} as net_profit,
+        -- Net profit = Contribution margin - CAC (only for first loan)
+        case 
+            when l.loan_sequence_number = 1 then 
+                {{ calculate_contribution_margin(
+                    'coalesce(r.total_revenue, 0)',
+                    'l.funding_cost',
+                    'coalesce(l.cogs_total_cost, 0)'
+                ) }} - coalesce(c.acquisition_cost, 0)
+            else 
+                {{ calculate_contribution_margin(
+                    'coalesce(r.total_revenue, 0)',
+                    'l.funding_cost',
+                    'coalesce(l.cogs_total_cost, 0)'
+                ) }}
+        end as net_profit,
         
         -- Recovery rate
-        coalesce(r.total_principal_repaid, 0) / nullif(l.loan_amount, 0) as recovery_rate,
-
-        -- customer
-        c.risk_segment,           
-        c.risk_band_production,   
-        c.channel,                
-        c.state,                 
-        c.city                 
+        coalesce(r.total_principal_repaid, 0) / nullif(l.loan_amount, 0) as recovery_rate
         
-    from loans l
+    from loans_with_sequence l
     left join repayments r on l.loan_id = r.loan_id
     left join customers c on l.user_id = c.user_id
+    left join customer_loan_counts clc on l.user_id = clc.user_id
 )
 
 select * from joined

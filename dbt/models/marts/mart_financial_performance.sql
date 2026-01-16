@@ -6,7 +6,6 @@
 }}
 
 -- Financial P&L metrics aggregated by vintage cohort
--- Used for executive dashboard and financial reporting
 
 with loan_financials as (
     select * from {{ ref('int_loan_financials') }}
@@ -16,8 +15,8 @@ aggregated as (
     select
         vintage_month,
         vintage_year,
-        risk_segment,
-        state,
+        risk_segment_customer,
+        state_customer,
         
         -- Volume metrics
         count(distinct loan_id) as total_loans,
@@ -33,7 +32,7 @@ aggregated as (
         -- Cost metrics
         sum(funding_cost) as funding_cost_total,
         sum(cac) as cac_total,
-        sum(cogs) as cogs_total,  -- COGS REAL
+        sum(cogs) as cogs_total,
         
         -- Margin metrics
         sum(financial_margin) as financial_margin_total,
@@ -61,8 +60,8 @@ aggregated as (
     group by 
         vintage_month,
         vintage_year,
-        risk_segment,
-        state
+        risk_segment_customer,
+        state_customer
 )
 
 select * from aggregated
