@@ -40,3 +40,17 @@ Runtime Error
 [0m00:51:08.026772 [debug] [MainThread]: Command `dbt ls` failed at 00:51:08.021934 after 0.09 seconds
 [0m00:51:08.027682 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002305D39D210>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002305D39EB50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002305D39D110>]}
 [0m00:51:08.028758 [debug] [MainThread]: Flushing usage events
+[0m23:46:34.574649 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002ACDF8E0C90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002ACE16C51D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002ACE27BCA50>]}
+
+
+============================== 23:46:34.593553 | b5fe482e-f914-4328-919b-541cc7dec14e ==============================
+[0m23:46:34.593553 [info ] [MainThread]: Running with dbt=1.8.0
+[0m23:46:34.595566 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'version_check': 'True', 'fail_fast': 'False', 'log_path': 'logs', 'debug': 'False', 'profiles_dir': 'C:\\Users\\mijai\\.dbt', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'invocation_command': 'dbt seed --select funding_cost_rates', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'target_path': 'None', 'static_parser': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m23:46:34.598203 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\mijai\kueski-analytics-engineer-mijail\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m23:46:34.601640 [debug] [MainThread]: Command `dbt seed` failed at 23:46:34.601640 after 0.24 seconds
+[0m23:46:34.602694 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002ACE29D9210>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002ACE2A03710>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002ACE29CB3D0>]}
+[0m23:46:34.604709 [debug] [MainThread]: Flushing usage events
