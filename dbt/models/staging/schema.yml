@@ -58,3 +58,78 @@ models:
         tests:
           - not_null
       - name: reven
+
+
+  - name: stg_funding_cost_rates
+    description: |
+      Tasas de costo de financiamiento (funding cost) mensuales para Kueski.
+      
+      **Fuente:** Banco de México - Serie SF43936 (TIIE 28 días)
+      **URL:** https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?sector=18&idCuadro=CA51
+      **Archivo:** data/raw/funding_cost_rates.csv
+      
+      El funding cost representa el costo de obtener capital que Kueski luego presta a sus clientes.
+      Se compone de:
+      - Tasa base (TIIE 28 días): Tasa del mercado interbancario
+      - Spread: Prima adicional que paga Kueski por encima de TIIE (~6%)
+      
+      Las tasas se calculan en tres periodicidades:
+      - Anual: Para reportes y comparaciones
+      - Mensual: Para cálculos de P&L mensuales
+      - Diaria: Para accrual preciso de intereses
+    
+    columns:
+      - name: rate_month
+        description: Primer día del mes de vigencia de la tasa
+        tests:
+          - unique
+          - not_null
+      
+      - name: tiie_28_rate
+        description: |
+          Tasa TIIE 28 días promedio del mes (en decimal)
+          Ejemplo: 0.1025 = 10.25% anual
+        tests:
+          - not_null
+      
+      - name: spread_rate
+        description: |
+          Spread adicional de Kueski sobre TIIE (en decimal)
+          Refleja el costo de obtener funding por encima de la tasa base
+          Estimado: 6% basado en benchmarks de fintechs mexicanas
+        tests:
+          - not_null
+      
+      - name: funding_cost_annual
+        description: |
+          Costo de fondeo anual total = TIIE + Spread
+          Ejemplo: 0.1625 = 16.25% anual
+          Usar para: Reportes anuales, comparaciones de performance
+        tests:
+          - not_null
+      
+      - name: funding_cost_monthly
+        description: |
+          Costo de fondeo mensual equivalente
+          Fórmula: (1 + funding_cost_annual)^(1/12) - 1
+          Usar para: Cálculos de P&L mensual, financial margin
+        tests:
+          - not_null
+      
+      - name: funding_cost_daily
+        description: |
+          Costo de fondeo diario equivalente (base 360 días)
+          Fórmula: (1 + funding_cost_annual)^(1/360) - 1
+          Usar para: Accrual diario de intereses, contabilidad devengada
+        tests:
+          - not_null
+      
+      - name: source
+        description: Identificador de la fuente de datos (Banxico_CA51)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Banxico_CA51']
+      
+      - name: _loaded_at
+        description: Timestamp de carga del registro      
