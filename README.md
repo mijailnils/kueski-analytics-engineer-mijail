@@ -229,9 +229,10 @@ Full documentation: [ASSUMPTIONS.md](./Challenge-Deliverables/ASSUMPTIONS.md)
 | 3 | Documentation | ✅ | `Challenge-Deliverables/ASSUMPTIONS.md` |
 | 4 | Marts (CSV/Excel) | ✅ | `data/exports/` |
 | 5 | Tableau dashboard | ✅ | [https://public.tableau.com/app/profile/mijail.kiektik/viz/KPIs-Kueski-AnalyticsEngineer-Challenge-Mijail] |
-| 6 | Slide deck | ✅ | `Challenge-Deliverables/*.pdf` |
-| 7 | Executive recommendation | ✅ | `Challenge-Deliverables/EXECUTIVE_RECOMMENDATION.md` |
-| 8 | QA queries | ✅ | `analisis_adhoc/00_core_validations.ipynb` |
+| 6 | Adhoc Analysis | ✅ | `analisis_adhoc/code/core_analysis.ipynb` |
+| 7 | Slide deck | ✅ | `Challenge-Deliverables/*.pdf` |
+| 8 | Executive recommendation | ✅ | `Challenge-Deliverables/EXECUTIVE_RECOMMENDATION.md` |
+| 9 | QA queries | ✅ | `analisis_adhoc/00_core_validations.ipynb` |
 
 ---
 
