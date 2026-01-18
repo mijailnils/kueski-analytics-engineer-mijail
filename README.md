@@ -278,7 +278,7 @@ python analysis/01_explore_data.py
 
 ## 👤 Author
 
-**Mijail** - Senior Data Analyst  
+**Mijail Kiektik** - Senior Data Analyst  
 Analytics Engineer Challenge for Kueski
 
 ---

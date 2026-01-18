@@ -1,7 +1,7 @@
 # KueskiPay Q1 2025 Portfolio Analysis
 ## Executive Recommendation for CEO Briefing
 
-**Date:** January 17, 2026  
+**Date:** January 2026  
 **Analyst:** Mijail Kiektik  
 **Period:** Q1 2025 (January - March)  
 
@@ -40,7 +40,7 @@ Revenue                    $1,576,262  100.0%
 
 ## Critical Findings
 
-### ��� Finding #1: Low Risk Segment is Unprofitable
+### Finding #1: Low Risk Segment is Unprofitable
 
 **The Problem:**
 - **Net Loss:** $23,943 total ($42.23 per loan)
@@ -57,7 +57,7 @@ Revenue                    $1,576,262  100.0%
 
 ---
 
-### ��� Finding #2: Medium Risk First Loans Losing Money
+### Finding #2: Medium Risk First Loans Losing Money
 
 **The Problem:**
 - **Loss per Loan:** $125.96
@@ -72,7 +72,7 @@ Revenue                    $1,576,262  100.0%
 
 ---
 
-### ��� Finding #3: Recurrent Customers Drive Profitability
+### Finding #3: Recurrent Customers Drive Profitability
 
 **The Opportunity:**
 - **Recurrent customers are 4.2x MORE profitable** than first-time borrowers
@@ -85,7 +85,7 @@ Lower CAC + proven repayment behavior = sustainable profitability
 
 ---
 
-### ��� Finding #4: High Risk Segment is Our Best Performer
+###  Finding #4: High Risk Segment is Our Best Performer
 
 **The Success Story:**
 - **Net Profit:** $383,602 (85% of total profit)
@@ -104,7 +104,7 @@ Lower CAC + proven repayment behavior = sustainable profitability
 - **Current Loans:** 78.4% (performing)
 - **Fully Paid:** 13.9% (completed)
 - **Past Due (1-29 days):** 1.7% (504 loans)
-- **Charge-offs:** $0 (portfolio too young for defaults)
+- **Charge-offs:** $0 (portfolio too young for defaults or not available information)
 - **Recovery Rate:** 82% overall
 
 ### Credit Risk Note
@@ -136,7 +136,7 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 #### Change #1: Reduce Low Risk Acquisition
 **Current State:** Losing $23,943/quarter
 
-**Recommended Actions (choose one):**
+**Recommended Actions :**
 - **Option A:** Reduce CAC spend by 50% ($45/customer → $23/customer)
   - Cut digital marketing spend for low-ticket loans
   - Focus acquisition on higher-value segments
@@ -209,7 +209,7 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 | Initiative | Quarterly Impact | Implementation Difficulty |
 |-----------|------------------|--------------------------|
 | Low Risk optimization | +$50,000 | Low |
-| Medium Risk pricing fix | +$40,000 | Low |
+| Medium Risk pricing fix | +$40,000 | Low-Medium |
 | Recurrent focus (90% rate) | +$150,000 | Medium |
 | CAC optimization | +$75,000 | Medium |
 | **TOTAL PROJECTED** | **+$315,000** | - |
@@ -236,9 +236,7 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 - [ ] Reallocate 30% of acquisition budget to retention
 
 ### Phase 3: Month 2-3
-- [ ] Monitor Q2 2025 vintage performance
-- [ ] Adjust Low Risk pricing (if maintaining segment)
-- [ ] Expand High Risk acquisition if performing well
+
 
 ---
 
@@ -266,7 +264,6 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 
 **Expected Outcome:** +$315K/quarter (+70% profit) with moderate implementation effort
 
-**Confidence Level:** High. Analysis based on 9,396 loans, clear profitability patterns, and strong portfolio health.
 
 ---
 
@@ -287,6 +284,6 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 
 ---
 
-**Prepared by:** Mijail Nils, Senior Data Analyst  
-**Date:** January 17, 2026  
-**Contact:** [Your contact info]
+**Prepared by:** Mijail Kiektik  
+**Date:** January 2026  
+**Contact:** mijailnils@gmail.com
