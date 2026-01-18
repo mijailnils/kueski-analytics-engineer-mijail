@@ -689,14 +689,14 @@ FROM int_loan_financials
 ## 11. Contact & Questions
 
 **For questions about:**
-- **Methodology:** Mijail Nils, Senior Data Analyst
+- **Methodology:** Mijail Kiektik, Senior Data Analyst
 - **Data Sources:** Data Engineering Team
 - **Business Context:** Finance Team / CFO Office
 - **Risk Assumptions:** Credit Risk Team
 
 **Document Location:** 
 - GitHub: `https://github.com/mijailnils/kueski-analytics-engineer-mijail/ASSUMPTIONS.md`
-- Last Updated: January 17, 2026
+- Last Updated: January 2026
 
 ---
 
