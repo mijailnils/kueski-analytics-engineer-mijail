@@ -228,7 +228,7 @@ Full documentation: [ASSUMPTIONS.md](./Challenge-Deliverables/ASSUMPTIONS.md)
 | 2 | Transformations & tests | ✅ | `dbt/` |
 | 3 | Documentation | ✅ | `Challenge-Deliverables/ASSUMPTIONS.md` |
 | 4 | Marts (CSV/Excel) | ✅ | `data/exports/` |
-| 5 | Tableau dashboard | ✅ | [Link in presentation] |
+| 5 | Tableau dashboard | ✅ | [https://public.tableau.com/app/profile/mijail.kiektik/viz/KPIs-Kueski-AnalyticsEngineer-Challenge-Mijail] |
 | 6 | Slide deck | ✅ | `Challenge-Deliverables/*.pdf` |
 | 7 | Executive recommendation | ✅ | `Challenge-Deliverables/EXECUTIVE_RECOMMENDATION.md` |
 | 8 | QA queries | ✅ | `analisis_adhoc/00_core_validations.ipynb` |
@@ -251,7 +251,7 @@ dbt test --profiles-dir .
 ---
 
 ## 📈 Tableau
-
+https://public.tableau.com/app/profile/mijail.kiektik/viz/KPIs-Kueski-AnalyticsEngineer-Challenge-Mijail/KPIs
 Connect to:
 - CSVs in `data/exports/`
 - Or directly to `dbt/kueski_finance.duckdb`
