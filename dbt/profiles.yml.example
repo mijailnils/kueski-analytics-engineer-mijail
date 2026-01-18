@@ -1,8 +1,0 @@
-kueski_finance:
-  target: dev
-  outputs:
-    dev:
-      type: duckdb
-      path: 'kueski_finance.duckdb'
-      schema: main
-      threads: 4
