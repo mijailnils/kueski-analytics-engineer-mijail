@@ -1,288 +1,279 @@
 # Kueski Analytics Engineer Challenge
-## Portfolio Analysis - Q1 2025 Vintages
+## KueskiPay Q1 2025 Portfolio Analysis
 
-**Goal**: Assess profitability of KueskiPay portfolio under current acquisition and pricing policies, and deliver an evidence-based recommendation to CEO/CFO.
+> **Objective:** Assess the profitability of the KueskiPay portfolio under current acquisition and pricing policies, and deliver an evidence-based recommendation to CEO/CFO.
+
+**Author:** Mijail Kiektik | **Date:** January 2026
+
+---
+
+## 🎯 Executive Summary
+
+**Recommendation:** Modify both acquisition and pricing policies to improve returns.
+
+While the portfolio is profitable ($449K net profit, 28.5% margin), specific segments are losing money:
+
+| Finding | Impact | Action |
+|---------|--------|--------|
+| Low Risk segment unprofitable | LTV/CAC 2.17x (below 3x threshold) | Reduce acquisition or reprice |
+| Medium Risk first loans lose money | -$125.96 per loan | Fix pricing for new customers |
+| High Risk recurrent = best performers | 9.11x LTV/CAC, 85% of profits | Scale up |
+
+**Expected Impact:** +$315K/quarter (+70% profit improvement)
+
+📄 Full analysis: [EXECUTIVE_RECOMMENDATION.md](./Challenge-Deliverables/EXECUTIVE_RECOMMENDATION.md)  
+📋 Methodology: [ASSUMPTIONS.md](./Challenge-Deliverables/ASSUMPTIONS.md)
 
 ---
 
 ## 📂 Project Structure
+
 ```
 kueski-analytics-engineer-mijail/
-├── README.md                          # You are here
-├── EXECUTIVE_RECOMMENDATION.md        # Final recommendation (complete after analysis)
-├── requirements.txt                   # Python dependencies
-├── .gitignore                        # Git ignore rules
+│
+├── Challenge-Deliverables/
+│   ├── EXECUTIVE_RECOMMENDATION.md      # Executive summary & recommendations
+│   ├── ASSUMPTIONS.md                   # Methodology, calculations & assumptions
+│   └── Kueski Financial P&L & Portfolio Performance - Mijail Kiektik.pdf
+│
+├── dbt/                                 # dbt project
+│   ├── dbt_project.yml
+│   ├── profiles.yml
+│   ├── kueski_finance.duckdb            # DuckDB database
+│   │
+│   ├── models/
+│   │   ├── staging/                     # Layer 1: Clean raw data
+│   │   │   ├── schema.yml               # Tests & documentation
+│   │   │   ├── stg_customers.sql
+│   │   │   ├── stg_loans.sql
+│   │   │   ├── stg_repayments.sql
+│   │   │   └── stg_funding_cost_rates.sql
+│   │   │
+│   │   ├── intermediate/                # Layer 2: Business logic
+│   │   │   ├── int_loans_latest.sql
+│   │   │   ├── int_loans_q1_vintages.sql
+│   │   │   ├── int_loan_repayments_agg.sql
+│   │   │   ├── int_loan_financials.sql
+│   │   │   ├── int_loan_performance.sql
+│   │   │   └── int_customer_loan_metrics.sql
+│   │   │
+│   │   └── marts/                       # Layer 3: Analytics tables
+│   │       ├── finance/
+│   │       │   ├── fct_loan_financials.sql
+│   │       │   ├── fct_portfolio_pnl.sql
+│   │       │   └── fct_agg_performance.sql
+│   │       ├── portfolio/
+│   │       │   ├── fct_cohort_performance.sql
+│   │       │   └── fct_vintage_curves.sql
+│   │       ├── export/
+│   │       │   └── customers_export.sql
+│   │       ├── mart_financial_performance.sql
+│   │       ├── mart_roll_rates.sql
+│   │       └── mart_vintage_curves.sql
+│   │
+│   └── macros/                          # Reusable SQL functions
+│       ├── calculate_revenue.sql
+│       ├── calculate_funding_cost.sql
+│       ├── calculate_credit_loss.sql
+│       ├── calculate_financial_margin.sql
+│       ├── calculate_cogs.sql
+│       ├── calculate_contribution_margin.sql
+│       ├── calculate_net_profit.sql
+│       ├── dpd_bucket.sql
+│       └── assign_cohort.sql
+│
+├── analisis_adhoc/                      # Jupyter notebooks
+│   ├── 00_core_validations.ipynb        # Data quality & reconciliation
+│   ├── 01_explore_customers.ipynb       # Customer dataset exploration
+│   ├── 02_explore_loans.ipynb           # Loans dataset exploration
+│   ├── 03_explore_repayments.ipynb      # Repayments analysis
+│   ├── 04_explore_vintage_curves.ipynb  # Cohort/vintage analysis
+│   ├── 05_validate_transformations.ipynb # dbt validation
+│   └── core_analysis.ipynb              # Main analysis notebook
 │
 ├── data/
-│   └── raw/                          # Place CSV files here (gitignored)
-│       ├── AE_challenge_customer.csv
-│       ├── AE_challenge_loans.csv
-│       └── AE_challenge_repayments.csv
+│   ├── raw/                             # Source CSV files (gitignored)
+│   │   ├── AE_challenge_customer.csv
+│   │   ├── AE_challenge_loans.csv
+│   │   └── AE_challenge_repayments.csv
+│   └── exports/                         # Processed data for Tableau
 │
-├── dbt/                              # dbt project (data transformations)
-│   ├── dbt_project.yml              # dbt configuration
-│   ├── profiles.yml.example         # Connection template
-│   ├── models/
-│   │   ├── staging/                 # Layer 1: Clean raw data
-│   │   ├── intermediate/            # Layer 2: Business logic
-│   │   └── marts/                   # Layer 3: Final analytics tables
-│   └── macros/                      # Reusable SQL functions
-│
-├── analysis/                         # Python analysis scripts
-│   ├── 01_explore_data.py           # Explore raw CSV files
-│   ├── 02_export_marts.py           # Export dbt tables to CSV
-│   └── 03_qa_reconciliation.py      # Data quality checks
-│
-└── exports/                          # CSV files for Tableau (auto-generated)
+└── README.md
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### Step 1: Install Dependencies
+### Prerequisites
+- Python 3.9+
+- dbt-core & dbt-duckdb
+
+### 1. Install Dependencies
 ```bash
-# Install Python packages
-pip install -r requirements.txt
+pip install dbt-core dbt-duckdb pandas numpy jupyter
 ```
 
-This installs:
-- `dbt-core` and `dbt-duckdb` - for data transformations
-- `pandas` and `pyarrow` - for data analysis
-- `duckdb` - embedded database
-
----
-
-### Step 2: Prepare Data
-
-**Small files (included in repo):**
-- ✅ `data/raw/AE_challenge_customer.csv` (331 KB)
-- ✅ `data/raw/AE_challenge_repayments.csv` (15 MB)
-
-**Large file (download separately):**
-- ⬇️ `data/raw/AE_challenge_loans.csv` (108 MB)
-
-**Download the large file:**
-1. Download: [AE_challenge_loans.csv (108 MB)](https://github.com/mijailnils/kueski-analytics-engineer-mijail/releases/download/v1.0-data/AE_challenge_loans.csv)
-2. Place in `data/raw/` folder
-3. Verify with: `ls -lh data/raw/`
-
-**Verify data is ready:**
-```bash
-python analysis/01_explore_data.py
+### 2. Prepare Data
+Place CSV files in `data/raw/`:
+```
+AE_challenge_customer.csv   (331 KB)
+AE_challenge_loans.csv      (108 MB)
+AE_challenge_repayments.csv (15 MB)
 ```
 
-Expected output: Summary statistics and data quality checks.
-
----
-
-### Step 3: Configure dbt
+### 3. Run dbt
 ```bash
 cd dbt
-
-# Copy the example profile
-cp profiles.yml.example profiles.yml
-
-# profiles.yml is already configured for local DuckDB
-# No changes needed unless you want different settings
-```
-
----
-
-### Step 4: Run dbt Models
-```bash
-# Still in dbt/ directory
-
-# Run all transformations
 dbt run --profiles-dir .
-
-# Run data quality tests
 dbt test --profiles-dir .
 ```
 
-**What happens:**
-1. Creates `kueski_finance.duckdb` database
-2. Reads CSV files from `../data/raw/`
-3. Creates staging views (clean data)
-4. Creates intermediate views (business logic)
-5. Creates marts tables (final analytics)
-
-**Expected output:**
-```
-Completed successfully
-Done. PASS=11 WARN=0 ERROR=0
-```
-
----
-
-### Step 5: Export Data for Analysis
+### 4. Explore Analysis
 ```bash
-# Go back to project root
-cd ..
-
-# Export marts to CSV
-python analysis/02_export_marts.py
+jupyter notebook analisis_adhoc/
 ```
-
-**Output**: CSV files created in `exports/` folder:
-- `fct_loan_financials.csv` - Loan-level metrics
-- `fct_cohort_performance.csv` - Cohort aggregations
-- `fct_portfolio_pnl.csv` - P&L summary
 
 ---
 
-### Step 6: Run QA Checks
-```bash
-python analysis/03_qa_reconciliation.py
-```
+## 📊 Key Results
 
-**Verifies:**
-- Revenue reconciliation (should match 100%)
-- Loan counts across tables
-- No NULL values in critical fields
-- Financial metrics within expected ranges
+### P&L Waterfall (Q1 2025)
+
+| Metric | Amount | % Revenue |
+|--------|-------:|----------:|
+| **Revenue** | $1,576,262 | 100.0% |
+| Funding Cost | ($716,623) | 45.5% |
+| **Financial Margin** | $859,639 | 54.5% |
+| COGS | ($181,043) | 11.5% |
+| **Contribution Margin** | $678,596 | 43.1% |
+| CAC | ($229,587) | 14.6% |
+| **Net Profit** | $449,009 | 28.5% |
+
+### Performance by Risk Segment
+
+| Segment | Loans | Profit | $/Loan | LTV/CAC | Status |
+|---------|------:|-------:|-------:|--------:|--------|
+| High Risk | 5,991 | $383,602 | $64.03 | 9.11x | ✅ Scale |
+| Medium Risk | 2,785 | $86,854 | $31.19 | 5.14x | ⚠️ Fix pricing |
+| Low Risk | 567 | -$23,943 | -$42.23 | 2.17x | 🔴 Reduce |
+
+### Customer Type
+
+| Type | Loans | Profit/Loan | LTV/CAC |
+|------|------:|------------:|--------:|
+| First Loan | 1,441 | $12.91 | 3.38x |
+| Recurrent | 7,955 | $54.10 | 8.74x |
 
 ---
 
-## 📊 Data Model Overview
+## 🔧 Data Model
 
-### Layer 1: Staging (`dbt/models/staging/`)
+### Staging Layer
+Cleans raw data with consistent naming:
+- `stg_customers` — Customer demographics & risk bands
+- `stg_loans` — Loan details with monthly snapshots
+- `stg_repayments` — Payment transactions
+- `stg_funding_cost_rates` — TIIE 28 + spread rates
 
-Cleans and standardizes raw data:
-- `stg_customers.sql` - Customer acquisition data
-- `stg_loans.sql` - Loan data with status
-- `stg_repayments.sql` - Payment transactions
-
-### Layer 2: Intermediate (`dbt/models/intermediate/`)
-
+### Intermediate Layer
 Applies business logic:
-- `int_loans_latest.sql` - Latest loan status (handles monthly snapshots)
-- `int_loans_q1_vintages.sql` - Filter to Q1 2025 only
-- `int_loan_repayments_agg.sql` - Aggregate repayments per loan
-- `int_loan_performance.sql` - Complete loan-level metrics
+- `int_loans_latest` — Deduplicates to latest snapshot per loan
+- `int_loans_q1_vintages` — Filters to Jan-Mar 2025
+- `int_loan_repayments_agg` — Aggregates repayments per loan
+- `int_loan_financials` — Calculates P&L metrics using macros
+- `int_loan_performance` — Adds performance flags
+- `int_customer_loan_metrics` — Customer-level aggregations
 
-### Layer 3: Marts (`dbt/models/marts/`)
-
+### Marts Layer
 Analytics-ready tables:
+- **Finance:** `fct_loan_financials`, `fct_portfolio_pnl`, `fct_agg_performance`
+- **Portfolio:** `fct_cohort_performance`, `fct_vintage_curves`
+- **Exports:** `customers_export`, `mart_roll_rates`
 
-**Finance:**
-- `fct_loan_financials.sql` - Every loan with all financial metrics
-- `fct_portfolio_pnl.sql` - P&L by vintage and risk segment
-
-**Portfolio:**
-- `fct_cohort_performance.sql` - Cohort-level KPIs
-
----
-
-## 📈 Key Metrics Calculated
-
-### Revenue Metrics
-- Interest revenue (from repayments)
-- Fee revenue
-- Total revenue
-
-### Cost Metrics
-- Funding cost (charge-offs)
-- COGS (operational costs)
-- CAC (customer acquisition cost)
-
-### Margin Metrics
-- **Financial Margin** = Revenue - Funding Cost
-- **Contribution Margin** = Revenue - Funding Cost - COGS
-- **Net Profit** = Revenue - All Costs
-
-### Performance Metrics
-- Loss rate (charge-offs / loan volume)
-- LTV/CAC ratio
-- Fully paid rate
-- Delinquency rate
+### Macros
+Reusable financial calculations:
+```
+calculate_revenue()           → Interest + Fees + Penalties
+calculate_funding_cost()      → Loan × Rate × Term
+calculate_credit_loss()       → Charge-off amounts
+calculate_financial_margin()  → Revenue - Funding - Credit Loss
+calculate_cogs()              → Operational costs
+calculate_contribution_margin() → Financial Margin - COGS
+calculate_net_profit()        → Contribution Margin - CAC
+dpd_bucket()                  → Days past due classification
+assign_cohort()               → Vintage month assignment
+```
 
 ---
 
-## 🔍 Analysis Approach
+## 📋 Key Assumptions
 
-### Risk Segmentation
-Based on `risk_band_production`:
-- **Low Risk**: bands 1-2
-- **Medium Risk**: bands 3-4  
-- **High Risk**: bands 4.1-5
-- **Unknown**: missing scores
+Full documentation: [ASSUMPTIONS.md](./Challenge-Deliverables/ASSUMPTIONS.md)
 
-### Vintage Definition
-- **Vintage Month** = Month of loan disbursement
-- **Cohort** = Vintage Month + Risk Segment
+| Assumption | Value | Rationale |
+|------------|-------|-----------|
+| Funding Rate | TIIE 28 + 200 bps | Industry standard for Mexican fintech |
+| Credit Loss | $0 | Portfolio <12 months, no charge-offs yet |
+| CAC Allocation | 100% to first loan | Conservative; recurrent = $0 CAC |
+| Risk Segments | 1-2: Low, 3-4: Medium, 4.1-5: High | Based on `risk_band_production` |
 
-### Q1 2025 Scope
-Analysis focuses on loans disbursed in:
-- January 2025
-- February 2025
-- March 2025
+---
+
+## ✅ Deliverables
+
+| # | Deliverable | Status | Location |
+|---|-------------|:------:|----------|
+| 1 | Data model (dbt) | ✅ | `dbt/models/` |
+| 2 | Transformations & tests | ✅ | `dbt/` |
+| 3 | Documentation | ✅ | `Challenge-Deliverables/ASSUMPTIONS.md` |
+| 4 | Marts (CSV/Excel) | ✅ | `data/exports/` |
+| 5 | Tableau dashboard | ✅ | [Link in presentation] |
+| 6 | Slide deck | ✅ | `Challenge-Deliverables/*.pdf` |
+| 7 | Executive recommendation | ✅ | `Challenge-Deliverables/EXECUTIVE_RECOMMENDATION.md` |
+| 8 | QA queries | ✅ | `analisis_adhoc/00_core_validations.ipynb` |
 
 ---
 
 ## 🧪 Testing
 
-All models include data quality tests:
 ```bash
 cd dbt
 dbt test --profiles-dir .
 ```
 
-Tests verify:
-- Unique keys (no duplicates)
-- Not null (required fields populated)
-- Relationships (foreign keys valid)
+**Tests include:**
+- `unique` — No duplicate keys
+- `not_null` — Required fields populated
+- `relationships` — Foreign key integrity
+- `accepted_values` — Valid data ranges
 
 ---
 
-## 📦 Deliverables
+## 📈 Tableau
 
-1. ✅ **This Repository** - Code, models, tests, documentation
-2. ✅ **CSV Exports** - `exports/` folder with marts
-3. ⏳ **Tableau Dashboard** - Connect to CSV exports
-4. ⏳ **Executive Recommendation** - `EXECUTIVE_RECOMMENDATION.md`
-5. ✅ **QA File** - `analysis/03_qa_reconciliation.py`
+Connect to:
+- CSVs in `data/exports/`
+- Or directly to `dbt/kueski_finance.duckdb`
 
 ---
 
-## 🔧 Troubleshooting
+## 🔍 Troubleshooting
 
-### "Database not found" error
-```bash
-cd dbt
-dbt run --profiles-dir .
-```
-
-### "CSV files not found" error
-Verify files are in `data/raw/` with exact names:
-- `AE_challenge_customer.csv`
-- `AE_challenge_loans.csv`
-- `AE_challenge_repayments.csv`
-
-### dbt tests failing
-Check CSV data quality. Run exploration script:
-```bash
-python analysis/01_explore_data.py
-```
+| Error | Solution |
+|-------|----------|
+| Database not found | `cd dbt && dbt run --profiles-dir .` |
+| CSV not found | Check files in `data/raw/` |
+| Tests failing | Run `jupyter notebook analisis_adhoc/00_core_validations.ipynb` |
 
 ---
 
-## 📝 Key Assumptions
+## 📝 Contact
 
-1. **Loan Snapshots**: Loans table has monthly snapshots via `limit_month`. We use the latest snapshot per loan.
-2. **Revenue Attribution**: All revenue from `repayments` table is attributed to loans.
-3. **Funding Cost**: Calculated from `charge_off` amounts (defaulted capital).
-4. **Vintages**: Defined by loan `disbursed_date` month.
-
----
-
-## 👤 Author
-
-**Mijail Kiektik** - Senior Data Analyst  
-Analytics Engineer Challenge for Kueski
+**Mijail Kiektik**  
+Analytics Engineer
+mijailnils@gmail.com
 
 ---
 
-## 📄 License
-
-This is a technical challenge project for evaluation purposes.
+*Technical challenge for Kueski - Analytics Engineer Position*
