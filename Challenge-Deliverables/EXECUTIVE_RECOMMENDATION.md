@@ -147,7 +147,7 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
   
 **Target:** Achieve 3.0x+ LTV/CAC ratio
 
-**Expected Impact:** +$50K/quarter profit improvement
+**Expected Impact:** +$24K/quarter profit improvement
 
 ---
 
@@ -183,7 +183,7 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 
 **Target:** Increase recurrent rate from 84.7% to 90%+
 
-**Expected Impact:** +$150K/quarter profit improvement
+**Expected Impact:** +$20K/quarter profit improvement
 
 ---
 
@@ -200,7 +200,7 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 - Focus paid acquisition exclusively on High/Medium Risk
 - Stop Low Risk paid acquisition entirely
 
-**Expected Impact:** +$75K/quarter profit improvement
+**Expected Impact:** +$25K/quarter profit improvement
 
 ---
 
@@ -208,13 +208,13 @@ Q1 2025 loans are 9-11 months old, so true default rates haven't yet materialize
 
 | Initiative | Quarterly Impact | Implementation Difficulty |
 |-----------|------------------|--------------------------|
-| Low Risk optimization | +$50,000 | Low |
+| Low Risk optimization | +$24,000 | Low |
 | Medium Risk pricing fix | +$40,000 | Low-Medium |
-| Recurrent focus (90% rate) | +$150,000 | Medium |
-| CAC optimization | +$75,000 | Medium |
-| **TOTAL PROJECTED** | **+$315,000** | - |
+| Recurrent focus (90% rate) | +$20,000 | Medium |
+| CAC optimization | +$25,000 | Medium |
+| **TOTAL PROJECTED** | **+$109,000** | - |
 
-**ROI:** +70% profit improvement ($449K → $764K/quarter)
+**ROI:** +22% profit improvement ($109 k quarter)
 
 **Timeline:** 
 - Pricing changes: Immediate (next vintage)
